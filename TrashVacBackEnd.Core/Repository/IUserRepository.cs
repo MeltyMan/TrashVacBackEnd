@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using TrashVacBackEnd.Core.Entity;
+
+namespace TrashVacBackEnd.Core.Repository
+{
+    public interface IUserRepository
+    {
+        IList<User> GetUserList();
+        Guid CreateUser(UserFull user);
+        bool TryLogin(string userName, string password, out UserAuthenticated user);
+        bool ValidateToken(string token, out UserAuthenticated user);
+    }
+}
