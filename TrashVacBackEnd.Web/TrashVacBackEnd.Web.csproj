@@ -18,4 +18,6 @@
     <ProjectReference Include="..\TrashVacBackEnd.Core\TrashVacBackEnd.Core.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="3rjehfjdhf" /></VisualStudio></ProjectExtensions>
+
 </Project>

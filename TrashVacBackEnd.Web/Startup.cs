@@ -39,9 +39,14 @@ namespace TrashVacBackEnd.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
+            var appSettingsFileName = "appsettings.json";
 
+            if (env.IsDevelopment())
+            {
+                appSettingsFileName = "appsettings.Development.json";
+            }
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile(appSettingsFileName);
 
             TrashVacBackEnd.Core.ServiceProvider.Current.InitServices(builder);
 
@@ -49,9 +54,11 @@ namespace TrashVacBackEnd.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TrashVacBackEnd Web v1"));
+                
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TrashVacBackEnd Web v1"));
 
             app.UseHttpsRedirection();
 
