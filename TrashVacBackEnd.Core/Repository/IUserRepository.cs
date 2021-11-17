@@ -10,6 +10,7 @@ namespace TrashVacBackEnd.Core.Repository
         IList<User> GetUserList();
         Guid CreateUser(UserFull user);
         bool TryLogin(string userName, string password, out UserAuthenticated user);
-        bool ValidateToken(string token, out UserAuthenticated user);
+        bool ValidateToken(string token, out User user);
+        User GetUserById(Guid userId);
     }
 }

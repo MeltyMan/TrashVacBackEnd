@@ -18,5 +18,9 @@ namespace TrashVacBackEnd.Core.Configurations
         {
             get { return Convert.ToInt32(base.GetConfigValue(_root, "AccessTokenTTL")); }
         }
+        public string StaticAccessToken
+        {
+            get { return base.GetConfigValue(_root, "StaticAccessToken"); }
+        }
     }
 }

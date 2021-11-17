@@ -27,7 +27,7 @@ namespace TrashVacBackEnd.Web.Controllers
        
         [HttpGet]
         [Route("list")]
-        [TrashVacAuthorize]
+        [TrashVacAuthorize(Enums.UserLevel.Admin)]
         public IList<User> ListUsers()
         {
             return _userRepository.GetUserList();

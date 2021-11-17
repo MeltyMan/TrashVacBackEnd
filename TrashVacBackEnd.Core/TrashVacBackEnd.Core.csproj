@@ -9,4 +9,11 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="HiQ.NetStandard.Util.Data">
+      <HintPath>..\Libs\HiQ.NetStandard.Util.Data.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
 </Project>

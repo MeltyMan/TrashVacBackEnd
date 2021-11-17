@@ -5,6 +5,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Newtonsoft.Json;
+using TrashVacBackEnd.Core;
+using TrashVacBackEnd.Core.Entity;
 using TrashVacBackEnd.Core.Repository;
 
 namespace TrashVacBackEnd.Web.Filters
@@ -24,16 +27,26 @@ namespace TrashVacBackEnd.Web.Filters
         {
             var hasClaim = false;
 
-            if (_claim.Value.Equals("true", StringComparison.OrdinalIgnoreCase))
+            var claimTypes = JsonConvert.DeserializeObject<ClaimTypeCollection>(_claim.Value);
+            if (claimTypes != null)
             {
-                var authHeader = context.HttpContext.Request.Headers["trashvac-auth"];
-                if (authHeader.Count == 1)
+                if (claimTypes.GetValue<bool>("requiretoken"))
                 {
-                    var token = authHeader[0];
-                    hasClaim = _userRepository.ValidateToken(token, out var user);
+                    var authHeader = context.HttpContext.Request.Headers["trashvac-auth"];
+                    if (authHeader.Count == 1)
+                    {
+                        var token = authHeader[0];
+                        hasClaim = _userRepository.ValidateToken(token, out var user);
+                        var minReqUserLevel = claimTypes.GetValue<Enums.UserLevel>("minuserlevel");
+                        if (minReqUserLevel >= Enums.UserLevel.Undefined)
+                        {
+                            hasClaim = user.UserLevel >= minReqUserLevel;
+                        }
+                    }
                 }
             }
 
+            
             if (!hasClaim)
             {
                 context.Result = new UnauthorizedResult();

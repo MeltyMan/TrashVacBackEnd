@@ -5,29 +5,19 @@ using TrashVacBackEnd.Core.Entity;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using HiQ.NetStandard.Util.Data;
 
 namespace TrashVacBackEnd.Core.Repository
 {
-    public class SqlUserRepository : IUserRepository
+    public class SqlUserRepository : ADbRepositoryBase, IUserRepository
     {
         #region Public Methods
         
         public IList<User> GetUserList()
         {
             IList<User> userList = new List<User>();
-
-            var connectionString = ServiceProvider.Current.Configuration.ConnectionStrings.TrashVacDbConnectionString;
-
-
-            SqlConnection connection =
-                new SqlConnection(connectionString);
-            connection.Open();
-
-            SqlCommand command = new SqlCommand("dbo.sUsers_List", connection)
-                { CommandType = CommandType.StoredProcedure };
             
-            
-            SqlDataReader dr = command.ExecuteReader();
+            var dr = DbAccess.ExecuteReader("dbo.sUsers_List", CommandType.StoredProcedure);
 
             while (dr.Read())
             {
@@ -38,13 +28,8 @@ namespace TrashVacBackEnd.Core.Repository
                 });
             }
 
-            dr.Close();
-            dr = null;
-
-            connection.Close();
+            DbAccess.DisposeReader(ref dr);
             
-
-
             return userList;
 
         }
@@ -125,7 +110,7 @@ namespace TrashVacBackEnd.Core.Repository
             return result;
         }
 
-        public bool ValidateToken(string token, out UserAuthenticated user)
+        public bool ValidateToken(string token, out User user)
         {
             var result = false;
             user = null;
@@ -148,12 +133,41 @@ namespace TrashVacBackEnd.Core.Repository
 
             if (result)
             {
-                user = new UserAuthenticated() { Id = new Guid(cmd.Parameters[3].Value.ToString()) };
+                user = GetUserById(new Guid(cmd.Parameters[3].Value.ToString()));
             }
 
             conn.Close();
 
             return result;
+        }
+
+        public User GetUserById(Guid userId)
+        {
+            
+
+            var parameters = new SqlParameters();
+            parameters.AddUniqueIdentifier("@UserId", userId);
+            parameters.AddBoolean("@Result", false, ParameterDirection.Output);
+            parameters.AddVarChar("@UserName", 255, string.Empty, ParameterDirection.Output);
+            parameters.AddNVarChar("@FirstName", 50, string.Empty, ParameterDirection.Output);
+            parameters.AddNVarChar("@LastName", 100, string.Empty, ParameterDirection.Output);
+            parameters.AddInt("@UserLevel", 0, ParameterDirection.Output);
+
+            DbAccess.ExecuteNonQuery("dbo.sUser_GetById", ref parameters, CommandType.StoredProcedure);
+
+            if (parameters.GetBool("@Result"))
+            {
+                return new User()
+                {
+                    Id = userId,
+                    UserName = parameters.GetString("@UserName"),
+                    FirstName = parameters.GetString("@FirstName"),
+                    LastName = parameters.GetString("@LastName"),
+                    UserLevel = (Enums.UserLevel)parameters.GetInt("@UserLevel")
+                };
+            }
+
+            return null;
         }
         #endregion
         
