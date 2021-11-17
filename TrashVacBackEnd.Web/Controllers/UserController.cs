@@ -1,17 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TrashVacBackEnd.Core;
-using TrashVacBackEnd.Core.Entity;
+using TrashVac.Entity;
 using TrashVacBackEnd.Core.Repository;
 using TrashVacBackEnd.Web.Attributes;
 
 namespace TrashVacBackEnd.Web.Controllers
 {
-    
+
     [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
@@ -28,30 +24,30 @@ namespace TrashVacBackEnd.Web.Controllers
         [HttpGet]
         [Route("list")]
         [TrashVacAuthorize(Enums.UserLevel.Admin)]
-        public IList<User> ListUsers()
+        public ActionResult<IList<User>> ListUsers()
         {
-            return _userRepository.GetUserList();
+            return new OkObjectResult(_userRepository.GetUserList());
         }
 
         [HttpPost]
         [Route("")]
         [TrashVacAuthorize(Enums.UserLevel.Admin)]
-        public Guid CreateUser(UserFull user)
+        public ActionResult<Guid> CreateUser(UserFull user)
         {
-            return _userRepository.CreateUser(user);
+            return new OkObjectResult(_userRepository.CreateUser(user));
         }
 
         [HttpGet]
         [Route("login")]
-        public UserAuthenticated Login(string userName, string password)
+        public ActionResult<UserAuthenticated> Login(string userName, string password)
         {
             if (_userRepository.TryLogin(userName, password, out var user))
             {
-                return user;
+                return new OkObjectResult(user);
             }
             else
             {
-                return null;
+                return new UnauthorizedResult();
             }
         }
 

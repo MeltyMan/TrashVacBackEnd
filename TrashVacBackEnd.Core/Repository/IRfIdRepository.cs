@@ -1,4 +1,4 @@
-﻿using TrashVacBackEnd.Core.Entity;
+﻿using TrashVac.Entity;
 
 namespace TrashVacBackEnd.Core.Repository
 {

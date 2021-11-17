@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TrashVacBackEnd.Core
+namespace TrashVac.Entity
 {
     public class Enums
     {

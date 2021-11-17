@@ -1,11 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TrashVacBackEnd.Core.Entity;
-using TrashVacBackEnd.Core.Extensions;
+﻿using Microsoft.AspNetCore.Mvc;
+using TrashVac.Entity;
 using TrashVacBackEnd.Core.Repository;
 using TrashVacBackEnd.Web.Attributes;
 

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
-using TrashVacBackEnd.Core;
-using TrashVacBackEnd.Core.Entity;
+using System.Security.Claims;
+using TrashVac.Entity;
 using TrashVacBackEnd.Core.Repository;
 
 namespace TrashVacBackEnd.Web.Filters

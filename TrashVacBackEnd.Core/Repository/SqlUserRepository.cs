@@ -1,11 +1,9 @@
-﻿using System;
+﻿using HiQ.NetStandard.Util.Data;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using TrashVacBackEnd.Core.Entity;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
-using HiQ.NetStandard.Util.Data;
+using TrashVac.Entity;
 
 namespace TrashVacBackEnd.Core.Repository
 {

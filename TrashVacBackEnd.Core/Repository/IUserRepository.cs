@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using TrashVacBackEnd.Core.Entity;
+using TrashVac.Entity;
 
 namespace TrashVacBackEnd.Core.Repository
 {
