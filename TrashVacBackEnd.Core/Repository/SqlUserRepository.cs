@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using TrashVac.Entity;
+using TrashVac.Entity.Dto;
+using TrashVacBackEnd.Core.Extensions;
 
 namespace TrashVacBackEnd.Core.Repository
 {
@@ -19,11 +21,14 @@ namespace TrashVacBackEnd.Core.Repository
 
             while (dr.Read())
             {
-                userList.Add(new User()
-                {
-                    Id = dr.GetGuid(0), FirstName = dr.GetString(1), LastName = dr.GetString(2),
-                    UserLevel = (Enums.UserLevel)dr.GetInt32(3)
-                });
+                //userList.Add(new User()
+                //{
+                //    Id = dr.GetGuid(0),
+                //    FirstName = dr.GetString(1),
+                //    LastName = dr.GetString(2),
+                //    UserLevel = (Enums.UserLevel)dr.GetInt32(3)
+                //});
+                userList.Add(ParseUserDataRow<User>(ref dr));
             }
 
             DbAccess.DisposeReader(ref dr);
@@ -32,33 +37,129 @@ namespace TrashVacBackEnd.Core.Repository
 
         }
 
+        public IList<User> SearchUser(string searchString)
+        {
+            
+            IList<User> userList = new List<User>();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.Replace("*", "%");
+
+                if (!searchString.StartsWith("%"))
+                {
+                    searchString = $"%{searchString}";
+                }
+
+                if (!searchString.EndsWith("%"))
+                {
+                    searchString = $"{searchString}%";
+                }
+
+                if (searchString.Length >= 4)
+                {
+
+                    var parameters = new SqlParameters();
+                    parameters.AddSearchString(searchString);
+
+                    var dr = DbAccess.ExecuteReader("dbo.sUser_Search", ref parameters, CommandType.StoredProcedure);
+                    while (dr.Read())
+                    {
+                        userList.Add(ParseUserDataRow<User>(ref dr));
+                    }
+
+                    DbAccess.DisposeReader(ref dr);
+                }
+            }
+
+            return userList;
+        }
+
         public Guid CreateUser(UserFull user)
         {
+            if (ValidateUserDto(user))
+            {
 
+                var conn = new SqlConnection(ServiceProvider.Current.Configuration.ConnectionStrings
+                    .TrashVacDbConnectionString);
+                conn.Open();
 
-            var conn = new SqlConnection(ServiceProvider.Current.Configuration.ConnectionStrings
-                .TrashVacDbConnectionString);
-            conn.Open();
+                var pwdHash = Common.GenerateMd5Hash(user.Pwd);
 
-            var pwdHash = Common.GenerateMd5Hash(user.Pwd);
+                var cmd = new SqlCommand("dbo.sUser_Create", conn) { CommandType = CommandType.StoredProcedure };
+                cmd.Parameters.Add(new SqlParameter("@UserName", SqlDbType.VarChar, 255) { Value = user.UserName });
+                cmd.Parameters.Add(new SqlParameter("@PwdHash", SqlDbType.NVarChar, 255) { Value = pwdHash });
+                cmd.Parameters.Add(new SqlParameter("@FirstName", SqlDbType.NVarChar, 50) { Value = user.FirstName });
+                cmd.Parameters.Add(new SqlParameter("@LastName", SqlDbType.NVarChar, 100) { Value = user.LastName });
+                cmd.Parameters.Add(new SqlParameter("@UserLevel", SqlDbType.Int) { Value = (int)user.UserLevel });
+                cmd.Parameters.Add(new SqlParameter("@UserId", SqlDbType.UniqueIdentifier)
+                    { Value = null, Direction = ParameterDirection.Output });
 
-            var cmd = new SqlCommand("dbo.sUser_Create", conn) { CommandType = CommandType.StoredProcedure };
-            cmd.Parameters.Add(new SqlParameter("@UserName", SqlDbType.VarChar, 255) { Value = user.UserName });
-            cmd.Parameters.Add(new SqlParameter("@PwdHash", SqlDbType.NVarChar, 255) { Value = pwdHash });
-            cmd.Parameters.Add(new SqlParameter("@FirstName", SqlDbType.NVarChar, 50) { Value = user.FirstName });
-            cmd.Parameters.Add(new SqlParameter("@LastName", SqlDbType.NVarChar, 100) { Value = user.LastName });
-            cmd.Parameters.Add(new SqlParameter("@UserLevel", SqlDbType.Int) { Value = (int)user.UserLevel });
-            cmd.Parameters.Add(new SqlParameter("@UserId", SqlDbType.UniqueIdentifier)
-                { Value = null, Direction = ParameterDirection.Output });
+                cmd.ExecuteNonQuery();
 
-            cmd.ExecuteNonQuery();
+                var userId = new Guid(cmd.Parameters[5].Value.ToString());
 
-            var userId = new Guid(cmd.Parameters[5].Value.ToString());
+                conn.Close();
 
-            conn.Close();
+                return userId;
+            }
+            return Guid.Empty;
+            
+        }
 
-            return userId;
+        public Enums.PersistUserTagRelationStatus PersistUserTagRelation(Guid userId, UserRfIdRelation dto)
+        {
+            var user = GetUserById(userId);
+            if (user != null)
+            {
+                if (dto != null && dto.UserId.Equals(userId))
+                {
+                    var parameters = new SqlParameters();
+                    parameters.AddUserId(userId);
+                    parameters.AddRfId(dto.RfId);
+                    parameters.AddDeleted(dto.Deleted);
+                    DbAccess.ExecuteNonQuery("[dbo].[sUserRdIdRealation_Persist]", ref parameters,
+                        CommandType.StoredProcedure);
+                    return Enums.PersistUserTagRelationStatus.Success;
 
+                }
+
+                return Enums.PersistUserTagRelationStatus.InvalidDto;
+            }
+
+            return Enums.PersistUserTagRelationStatus.UserNotFound;
+        }
+
+        public UserWithTags GetUserTags(Guid userId)
+        {
+            UserWithTags user = null;
+
+            var parameters = new SqlParameters();
+            parameters.AddUserId(userId);
+
+            var index = 0;
+            var dr = DbAccess.ExecuteReader("dbo.sUser_GetRfIdTags", ref parameters, CommandType.StoredProcedure);
+            
+            while (dr.Read())
+            {
+                if (index == 0)
+                {
+                    user = ParseUserDataRow<UserWithTags>(ref dr);
+                }
+
+                if (user != null)
+                {
+                    if (!dr.IsDBNull(4) && !dr.IsDBNull(5))
+                    {
+                        user.Tags.Add(new RfIdTag() { RfId = dr.GetString(4), Description = dr.GetString(5) });
+                    }
+                }
+
+                index++;
+            }
+
+            DbAccess.DisposeReader(ref dr);
+            return user;
         }
 
         public bool TryLogin(string userName, string password, out UserAuthenticated user)
@@ -170,8 +271,22 @@ namespace TrashVacBackEnd.Core.Repository
         #endregion
         
         #region Private Methods
-        
-        
+
+        private T ParseUserDataRow<T>(ref SqlDataReader dr)
+        {
+
+            var user = Activator.CreateInstance<T>();
+
+            if (user is User)
+            {
+                (user as User).Id = dr.GetGuid(0);
+                (user as User).FirstName = dr.GetString(1);
+                (user as User).LastName = dr.GetString(2);
+                (user as User).UserLevel = (Enums.UserLevel)dr.GetInt32(3);
+            }
+           
+            return user;
+        }
         private string GenerateAccessToken()
         {
             const string VALID_CHARS = "0123456789abcdefghijklmnopqrstuvwx";
@@ -231,6 +346,19 @@ namespace TrashVacBackEnd.Core.Repository
 
             conn.Close();
         }
+
+        private bool ValidateUserDto(UserFull user)
+        {
+            if (user == null)
+            {
+                return false;
+            }
+
+            var result = !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName) &&
+                         !string.IsNullOrEmpty(user.UserName);
+            return result;
+        }
+
         #endregion
     }
 }

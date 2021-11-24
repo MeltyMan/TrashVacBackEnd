@@ -29,20 +29,24 @@ namespace TrashVac.Admin.UC
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.grpTop = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtSearchString = new System.Windows.Forms.TextBox();
             this.btnCreate = new System.Windows.Forms.Button();
             this.lstCustomers = new System.Windows.Forms.ListView();
             this.chLastName = new System.Windows.Forms.ColumnHeader();
             this.chFirstName = new System.Windows.Forms.ColumnHeader();
+            this.cmnuUser = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuTags = new System.Windows.Forms.ToolStripMenuItem();
             this.grpTop.SuspendLayout();
+            this.cmnuUser.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpTop
             // 
             this.grpTop.Controls.Add(this.label1);
-            this.grpTop.Controls.Add(this.textBox1);
+            this.grpTop.Controls.Add(this.txtSearchString);
             this.grpTop.Controls.Add(this.btnCreate);
             this.grpTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.grpTop.Location = new System.Drawing.Point(0, 0);
@@ -60,12 +64,13 @@ namespace TrashVac.Admin.UC
             this.label1.TabIndex = 2;
             this.label1.Text = "Filter:";
             // 
-            // textBox1
+            // txtSearchString
             // 
-            this.textBox1.Location = new System.Drawing.Point(194, 22);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(261, 23);
-            this.textBox1.TabIndex = 1;
+            this.txtSearchString.Location = new System.Drawing.Point(194, 22);
+            this.txtSearchString.Name = "txtSearchString";
+            this.txtSearchString.Size = new System.Drawing.Size(261, 23);
+            this.txtSearchString.TabIndex = 1;
+            this.txtSearchString.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // btnCreate
             // 
@@ -82,6 +87,7 @@ namespace TrashVac.Admin.UC
             this.lstCustomers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chLastName,
             this.chFirstName});
+            this.lstCustomers.ContextMenuStrip = this.cmnuUser;
             this.lstCustomers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstCustomers.FullRowSelect = true;
             this.lstCustomers.GridLines = true;
@@ -104,6 +110,20 @@ namespace TrashVac.Admin.UC
             this.chFirstName.Text = "First Name";
             this.chFirstName.Width = 200;
             // 
+            // cmnuUser
+            // 
+            this.cmnuUser.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuTags});
+            this.cmnuUser.Name = "cmnuUser";
+            this.cmnuUser.Size = new System.Drawing.Size(181, 48);
+            // 
+            // mnuTags
+            // 
+            this.mnuTags.Name = "mnuTags";
+            this.mnuTags.Size = new System.Drawing.Size(180, 22);
+            this.mnuTags.Text = "Tags";
+            this.mnuTags.Click += new System.EventHandler(this.mnuTags_Click);
+            // 
             // UcCustomer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -115,6 +135,7 @@ namespace TrashVac.Admin.UC
             this.Load += new System.EventHandler(this.UcCustomer_Load);
             this.grpTop.ResumeLayout(false);
             this.grpTop.PerformLayout();
+            this.cmnuUser.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -124,9 +145,11 @@ namespace TrashVac.Admin.UC
         private System.Windows.Forms.GroupBox grpTop;
         private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtSearchString;
         private System.Windows.Forms.ListView lstCustomers;
         private System.Windows.Forms.ColumnHeader chLastName;
         private System.Windows.Forms.ColumnHeader chFirstName;
+        private System.Windows.Forms.ContextMenuStrip cmnuUser;
+        private System.Windows.Forms.ToolStripMenuItem mnuTags;
     }
 }

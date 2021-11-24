@@ -1,4 +1,5 @@
-﻿using HiQ.NetStandard.Util.Data;
+﻿using System.Collections.Generic;
+using HiQ.NetStandard.Util.Data;
 using System.Data;
 using TrashVac.Entity;
 using TrashVacBackEnd.Core.Extensions;
@@ -11,7 +12,7 @@ namespace TrashVacBackEnd.Core.Repository
 
         public SqlRfIdRepository()
         {
-            _userRepository = new SqlUserRepository();
+            _userRepository = Injector.GetInstance<IUserRepository>();
         }
 
         public ValidateRfIdResponse ValidateRfIdAccess(string rfId, string doorId)
@@ -37,5 +38,22 @@ namespace TrashVacBackEnd.Core.Repository
 
         }
 
+        public IList<RfIdTag> GetList()
+        {
+            var result = new List<RfIdTag>();
+           
+            var dr = DbAccess.ExecuteReader("dbo.sRfIdTag_GetList", CommandType.StoredProcedure);
+
+            while (dr.Read())
+            {
+                result.Add(new RfIdTag() { RfId = dr.GetString(0), Description = dr.GetString(1) });
+            }
+
+            DbAccess.DisposeReader(ref dr);
+
+
+            return result;
+
+        }
     }
 }
