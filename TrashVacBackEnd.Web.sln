@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ConeoleApps", "ConeoleApps"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAppTest", "ConsoleAppTest\ConsoleAppTest.csproj", "{3AA5E3BB-D033-4DF0-8FF0-7F7AE7862AF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeTestKalle", "PrimeTestKalle\PrimeTestKalle.csproj", "{F6FBD71F-ADAF-429C-A732-40F7962154FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{3AA5E3BB-D033-4DF0-8FF0-7F7AE7862AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AA5E3BB-D033-4DF0-8FF0-7F7AE7862AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AA5E3BB-D033-4DF0-8FF0-7F7AE7862AF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6FBD71F-ADAF-429C-A732-40F7962154FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6FBD71F-ADAF-429C-A732-40F7962154FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6FBD71F-ADAF-429C-A732-40F7962154FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6FBD71F-ADAF-429C-A732-40F7962154FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +65,7 @@ Global
 		{98635127-0857-41B3-A27F-24F3F3D3DC08} = {7C92B942-1790-4FB3-8A82-E0F9D2C06F6F}
 		{718115D5-FFA8-4A55-AE5F-C41F6C7F2D9D} = {63AEF409-C41D-4397-9647-FD1C11E330E5}
 		{3AA5E3BB-D033-4DF0-8FF0-7F7AE7862AF8} = {E402879A-C4EA-4836-8986-6838B71C450F}
+		{F6FBD71F-ADAF-429C-A732-40F7962154FF} = {E402879A-C4EA-4836-8986-6838B71C450F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {82220FB2-6255-436A-BAF8-F3951107DB24}

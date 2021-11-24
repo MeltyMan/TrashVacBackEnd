@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PrimeTestKalle": {
+      "commandName": "Project",
+      "commandLineArgs": "1 50000"
+    }
+  }
+}
