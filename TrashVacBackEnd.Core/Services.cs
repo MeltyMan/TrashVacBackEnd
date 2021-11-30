@@ -8,7 +8,7 @@ namespace TrashVacBackEnd.Core
     public class Services
     {
         private Configuration _configuration;
-
+        private InMemoryStorage _inMemoryStorage;
         public void InitServices(IConfigurationBuilder builder)
         {
             _configuration = new Configuration(builder);
@@ -19,5 +19,7 @@ namespace TrashVacBackEnd.Core
             get { return _configuration; }
         }
 
+
+        public InMemoryStorage InMemoryStorage => _inMemoryStorage ??= new InMemoryStorage();
     }
 }
